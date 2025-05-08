@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Entities
+ majorVersion="9"
+ minorVersion="7"
+ universal="password">
+    <Things>
+        <Thing
+         description=""
+         documentationContent=""
+         effectiveThingPackage="SchedulerThing"
+         enabled="true"
+         homeMashup=""
+         identifier=""
+         inheritedValueStream=""
+         name="GitBackupScheduler"
+         projectName="GitDemoProject"
+         published="false"
+         tags=""
+         thingTemplate="Scheduler"
+         valueStream="">
+            <avatar></avatar>
+            <DesignTimePermissions>
+                <Create></Create>
+                <Read></Read>
+                <Update></Update>
+                <Delete></Delete>
+                <Metadata></Metadata>
+            </DesignTimePermissions>
+            <RunTimePermissions></RunTimePermissions>
+            <VisibilityPermissions>
+                <Visibility></Visibility>
+            </VisibilityPermissions>
+            <ConfigurationTableDefinitions></ConfigurationTableDefinitions>
+            <ConfigurationTables>
+                <ConfigurationTable
+                 dataShapeName=""
+                 description="General Settings"
+                 isHidden="true"
+                 isMultiRow="false"
+                 name="Settings"
+                 ordinal="0">
+                    <DataShape>
+                        <FieldDefinitions>
+                            <FieldDefinition
+                             aspect.defaultValue="true"
+                             baseType="BOOLEAN"
+                             description="Automatically enable scheduler on startup"
+                             name="enabled"
+                             ordinal="0"></FieldDefinition>
+                            <FieldDefinition
+                             baseType="USERNAME"
+                             description="User context in which to run event handlers"
+                             name="runAsUser"
+                             ordinal="0"></FieldDefinition>
+                            <FieldDefinition
+                             aspect.defaultValue="0 0/1 * * * ?"
+                             baseType="SCHEDULE"
+                             description="Execution Schedule (Cron String)"
+                             name="schedule"
+                             ordinal="0"></FieldDefinition>
+                        </FieldDefinitions>
+                    </DataShape>
+                    <Rows>
+                        <Row>
+                            <enabled>true</enabled>
+                            <runAsUser>
+                            <![CDATA[
+                            Administrator
+                            ]]>
+                            </runAsUser>
+                            <schedule>
+                            <![CDATA[
+                            0 0/5 * * * ?
+                            ]]>
+                            </schedule>
+                        </Row>
+                    </Rows>
+                </ConfigurationTable>
+            </ConfigurationTables>
+            <ThingShape>
+                <PropertyDefinitions></PropertyDefinitions>
+                <ServiceDefinitions>
+                    <ServiceDefinition
+                     aspect.isAsync="false"
+                     category=""
+                     description=""
+                     isAllowOverride="false"
+                     isLocalOnly="false"
+                     isOpen="false"
+                     isPrivate="false"
+                     name="ExportAndPush">
+                        <ResultType
+                         baseType="NOTHING"
+                         description=""
+                         name="result"
+                         ordinal="0"></ResultType>
+                        <ParameterDefinitions></ParameterDefinitions>
+                    </ServiceDefinition>
+                </ServiceDefinitions>
+                <EventDefinitions></EventDefinitions>
+                <ServiceMappings></ServiceMappings>
+                <ServiceImplementations>
+                    <ServiceImplementation
+                     description=""
+                     handlerName="Script"
+                     name="ExportAndPush">
+                        <ConfigurationTables>
+                            <ConfigurationTable
+                             dataShapeName=""
+                             description=""
+                             isMultiRow="false"
+                             name="Script"
+                             ordinal="0">
+                                <DataShape>
+                                    <FieldDefinitions>
+                                        <FieldDefinition
+                                         baseType="STRING"
+                                         description="code"
+                                         name="code"
+                                         ordinal="0"></FieldDefinition>
+                                    </FieldDefinitions>
+                                </DataShape>
+                                <Rows>
+                                    <Row>
+                                        <code>
+                                        <![CDATA[
+                                        //1. Export all entities in the desired project
+                                        
+                                        let iftbl_EntitiesToExport = Resources["SearchFunctions"].SpotlightSearch({
+                                        	maxItems: 30000 /* NUMBER */ ,
+                                        	searchExpression: undefined /* STRING */ ,
+                                        	types: undefined /* JSON */ ,
+                                        	withPermissions: undefined /* BOOLEAN */ ,
+                                        	endDate: undefined /* DATETIME */ ,
+                                        	aspects: undefined /* JSON */ ,
+                                        	excludedAspects: undefined /* JSON */ ,
+                                        	tags: undefined /* TAGS */ ,
+                                        	thingTemplates: undefined /* JSON */ ,
+                                        	searchDescriptions: undefined /* BOOLEAN */ ,
+                                        	thingShapes: undefined /* JSON */ ,
+                                        	sortBy: "lastModifiedDate" /* STRING */ ,
+                                        	isAscending: false /* BOOLEAN */ ,
+                                        	projectName: me.GetProjectName() /* PROJECTNAME */ ,
+                                        	maxSearchItems: undefined /* NUMBER */ ,
+                                        	startDate: undefined /* DATETIME */
+                                        });
+                                        
+                                        Things["ThingWorxDemoRepo"].ExportProjectEntities({
+                                        	ProjectName: me.GetProjectName(),
+                                        	includeDependents: false /* BOOLEAN */ ,
+                                        	EntitiesToExport: iftbl_EntitiesToExport /* INFOTABLE {"dataShape":"SpotlightSearch"} */
+                                        });
+                                        
+                                        //2. Execute the push to server
+                                        // Result: STRING
+                                        Things["ThingWorxDemoRepo"].Push({
+                                        	Message: "Automated backup triggered on " + new Date() /* STRING */
+                                        });
+                                        ]]>
+                                        </code>
+                                    </Row>
+                                </Rows>
+                            </ConfigurationTable>
+                        </ConfigurationTables>
+                    </ServiceImplementation>
+                </ServiceImplementations>
+                <Subscriptions>
+                    <Subscription
+                     aspect.isDistributed="false"
+                     description=""
+                     enabled="false"
+                     name="ExecuteGitBackup"
+                     version="2">
+                        <ServiceImplementation
+                         description=""
+                         handlerName="Script"
+                         name="ExecuteGitBackup">
+                            <ConfigurationTables>
+                                <ConfigurationTable
+                                 dataShapeName=""
+                                 description=""
+                                 isMultiRow="false"
+                                 name="Script"
+                                 ordinal="0">
+                                    <DataShape>
+                                        <FieldDefinitions>
+                                            <FieldDefinition
+                                             baseType="STRING"
+                                             description="code"
+                                             name="code"
+                                             ordinal="0"></FieldDefinition>
+                                        </FieldDefinitions>
+                                    </DataShape>
+                                    <Rows>
+                                        <Row>
+                                            <code>
+                                            <![CDATA[
+                                            me.ExportAndPush();
+                                            ]]>
+                                            </code>
+                                        </Row>
+                                    </Rows>
+                                </ConfigurationTable>
+                            </ConfigurationTables>
+                        </ServiceImplementation>
+                        <Events>
+                            <Event
+                             alias="Me_ScheduledEvent"
+                             eventName="ScheduledEvent"
+                             source=""
+                             sourceProperty=""
+                             sourceType="Thing"></Event>
+                        </Events>
+                    </Subscription>
+                </Subscriptions>
+            </ThingShape>
+            <PropertyBindings></PropertyBindings>
+            <RemotePropertyBindings></RemotePropertyBindings>
+            <RemoteServiceBindings></RemoteServiceBindings>
+            <RemoteEventBindings></RemoteEventBindings>
+            <AlertConfigurations></AlertConfigurations>
+            <ImplementedShapes></ImplementedShapes>
+            <ThingProperties></ThingProperties>
+        </Thing>
+    </Things>
+</Entities>
