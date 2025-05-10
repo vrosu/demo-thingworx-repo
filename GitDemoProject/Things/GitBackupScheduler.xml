@@ -118,6 +118,11 @@
                                          description="code"
                                          name="code"
                                          ordinal="0"></FieldDefinition>
+                                        <FieldDefinition
+                                         baseType="JSON"
+                                         description=""
+                                         name="editorSettings"
+                                         ordinal="0"></FieldDefinition>
                                     </FieldDefinitions>
                                 </DataShape>
                                 <Rows>
@@ -128,21 +133,9 @@
                                         
                                         let iftbl_EntitiesToExport = Resources["SearchFunctions"].SpotlightSearch({
                                         	maxItems: 30000 /* NUMBER */ ,
-                                        	searchExpression: undefined /* STRING */ ,
-                                        	types: undefined /* JSON */ ,
-                                        	withPermissions: undefined /* BOOLEAN */ ,
-                                        	endDate: undefined /* DATETIME */ ,
-                                        	aspects: undefined /* JSON */ ,
-                                        	excludedAspects: undefined /* JSON */ ,
-                                        	tags: undefined /* TAGS */ ,
-                                        	thingTemplates: undefined /* JSON */ ,
-                                        	searchDescriptions: undefined /* BOOLEAN */ ,
-                                        	thingShapes: undefined /* JSON */ ,
                                         	sortBy: "lastModifiedDate" /* STRING */ ,
-                                        	isAscending: false /* BOOLEAN */ ,
                                         	projectName: me.GetProjectName() /* PROJECTNAME */ ,
-                                        	maxSearchItems: undefined /* NUMBER */ ,
-                                        	startDate: undefined /* DATETIME */
+                                        
                                         });
                                         
                                         Things["ThingWorxDemoRepo"].ExportProjectEntities({
@@ -158,6 +151,13 @@
                                         });
                                         ]]>
                                         </code>
+                                        <editorSettings>
+                                            <json>
+                                            <![CDATA[
+                                            {"viewState":{"viewState":{"firstPositionDeltaTop":0,"scrollLeft":0,"firstPosition":{"column":1,"lineNumber":1}},"cursorState":[{"inSelectionMode":false,"selectionStart":{"column":4,"lineNumber":14},"position":{"column":4,"lineNumber":14}}],"contributionsState":{"editor.contrib.wordHighlighter":false,"editor.contrib.folding":{"provider":"indent","lineCount":20,"foldedImports":false}}}}
+                                            ]]>
+                                            </json>
+                                        </editorSettings>
                                     </Row>
                                 </Rows>
                             </ConfigurationTable>
